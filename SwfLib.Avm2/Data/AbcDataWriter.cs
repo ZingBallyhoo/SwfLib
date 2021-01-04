@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -20,10 +21,10 @@ namespace SwfLib.Avm2.Data {
             WriteMultipleMethods(abc.Methods);
             WriteMultipleMetadata(abc.Metadata);
 
-            if (abc.Classes.Length != abc.Instances.Length) {
+            if (abc.Classes.Count != abc.Instances.Count) {
                 throw new Exception("Number of Classes and Instances differs");
             }
-            var classCount = abc.Classes.Length;
+            var classCount = abc.Classes.Count;
             WriteU30((uint)classCount);
             WriteMultipleInstances(abc.Instances);
             WriteMultipleClasses(abc.Classes);
@@ -32,92 +33,92 @@ namespace SwfLib.Avm2.Data {
             WriteMultipleBodies(abc.Bodies);
         }
 
-        private void WriteMultipleMethods(AsMethodInfo[] methods) {
-            WriteU30((uint)methods.Length);
+        private void WriteMultipleMethods(IReadOnlyCollection<AsMethodInfo> methods) {
+            WriteU30((uint)methods.Count);
             foreach (var value in methods) {
                 WriteMethodInfo(value);
             }
         }
 
-        private void WriteMultipleMetadata(AsMetadataInfo[] vals) {
-            WriteU30((uint)vals.Length);
+        private void WriteMultipleMetadata(IReadOnlyCollection<AsMetadataInfo> vals) {
+            WriteU30((uint)vals.Count);
             foreach (var value in vals) {
                 WriteMetadata(value);
             }
         }
 
-        private void WriteMultipleInstances(AsInstanceInfo[] vals) {
+        private void WriteMultipleInstances(IReadOnlyCollection<AsInstanceInfo> vals) {
             foreach (var value in vals) {
                 WriteInstance(value);
             }
         }
 
-        private void WriteMultipleClasses(AsClassInfo[] vals) {
+        private void WriteMultipleClasses(IReadOnlyCollection<AsClassInfo> vals) {
             foreach (var value in vals) {
                 WriteClass(value);
             }
         }
 
-        private void WriteMultipleScripts(AsScriptInfo[] scripts) {
-            WriteU30((uint)scripts.Length);
+        private void WriteMultipleScripts(IReadOnlyCollection<AsScriptInfo> scripts) {
+            WriteU30((uint)scripts.Count);
             foreach (var value in scripts) {
                 WriteScript(value);
             }
         }
 
-        private void WriteMultipleBodies(AsMethodBodyInfo[] bodies) {
-            WriteU30((uint)bodies.Length);
+        private void WriteMultipleBodies(IReadOnlyCollection<AsMethodBodyInfo> bodies) {
+            WriteU30((uint)bodies.Count);
             foreach (var value in bodies) {
                 WriteMethodBody(value);
             }
         }
 
         public void WriteConstantPool(AsConstantPoolInfo constantPool) {
-            WriteU30((uint)(constantPool.Integers.Length <= 1 ? 0 : constantPool.Integers.Length));
-            for (var i = 1; i < constantPool.Integers.Length; i++) {
+            WriteU30((uint)(constantPool.Integers.Count <= 1 ? 0 : constantPool.Integers.Count));
+            for (var i = 1; i < constantPool.Integers.Count; i++) {
                 WriteS32(constantPool.Integers[i]);
             }
 
-            WriteU30((uint)(constantPool.UnsignedIntegers.Length <= 1 ? 0 : constantPool.UnsignedIntegers.Length));
-            for (var i = 1; i < constantPool.UnsignedIntegers.Length; i++) {
+            WriteU30((uint)(constantPool.UnsignedIntegers.Count <= 1 ? 0 : constantPool.UnsignedIntegers.Count));
+            for (var i = 1; i < constantPool.UnsignedIntegers.Count; i++) {
                 WriteU32(constantPool.UnsignedIntegers[i]);
             }
 
-            WriteU30((uint)(constantPool.Doubles.Length <= 1 ? 0 : constantPool.Doubles.Length));
-            for (var i = 1; i < constantPool.Doubles.Length; i++) {
+            WriteU30((uint)(constantPool.Doubles.Count <= 1 ? 0 : constantPool.Doubles.Count));
+            for (var i = 1; i < constantPool.Doubles.Count; i++) {
                 WriteD64(constantPool.Doubles[i]);
             }
 
-            WriteU30((uint)(constantPool.Strings.Length <= 1 ? 0 : constantPool.Strings.Length));
-            for (var i = 1; i < constantPool.Strings.Length; i++) {
+            WriteU30((uint)(constantPool.Strings.Count <= 1 ? 0 : constantPool.Strings.Count));
+            for (var i = 1; i < constantPool.Strings.Count; i++) {
                 WriteString(constantPool.Strings[i]);
             }
 
-            WriteU30((uint)(constantPool.Namespaces.Length <= 1 ? 0 : constantPool.Namespaces.Length));
-            for (var i = 1; i < constantPool.Namespaces.Length; i++) {
-                WriteNamespace(ref constantPool.Namespaces[i]);
+            WriteU30((uint)(constantPool.Namespaces.Count <= 1 ? 0 : constantPool.Namespaces.Count));
+            for (var i = 1; i < constantPool.Namespaces.Count; i++) {
+                WriteNamespace(constantPool.Namespaces[i]);
             }
 
-            WriteU30((uint)(constantPool.NamespaceSets.Length <= 1 ? 0 : constantPool.NamespaceSets.Length));
-            for (var i = 1; i < constantPool.NamespaceSets.Length; i++)
+            WriteU30((uint)(constantPool.NamespaceSets.Count <= 1 ? 0 : constantPool.NamespaceSets.Count));
+            for (var i = 1; i < constantPool.NamespaceSets.Count; i++)
                 WriteNamespaceSet(constantPool.NamespaceSets[i]);
 
-            WriteU30((uint)(constantPool.Multinames.Length <= 1 ? 0 : constantPool.Multinames.Length));
-            for (var i = 1; i < constantPool.Multinames.Length; i++)
-                WriteMultiname(ref constantPool.Multinames[i]);
+            WriteU30((uint)(constantPool.Multinames.Count <= 1 ? 0 : constantPool.Multinames.Count));
+            for (var i = 1; i < constantPool.Multinames.Count; i++)
+                WriteMultiname(constantPool.Multinames[i]);
 
         }
 
-        private void WriteNamespace(ref AsNamespaceInfo ns) {
+        private void WriteNamespace(in AsNamespaceInfo ns) {
             WriteU8((byte)ns.Kind);
             WriteU30(ns.Name);
         }
 
-        private void WriteNamespaceSet(AsNamespaceSetInfo nss) {
+        private void WriteNamespaceSet(in AsNamespaceSetInfo nss) {
             WriteMutipleU30(nss.Namespaces);
         }
 
-        private void WriteMultiname(ref AsMultinameInfo multiname) {
+        private void WriteMultiname(in AsMultinameInfo multiname) {
             WriteU8((byte)multiname.Kind);
             switch (multiname.Kind) {
                 case AsMultinameKind.QName:
@@ -206,8 +207,8 @@ namespace SwfLib.Avm2.Data {
             WriteMultipleTraits(instance.Traits);
         }
 
-        private void WriteMultipleTraits(AsTraitsInfo[] traits) {
-            WriteU30((uint)traits.Length);
+        private void WriteMultipleTraits(IReadOnlyCollection<AsTraitsInfo> traits) {
+            WriteU30((uint)traits.Count);
             foreach (var trait in traits) {
                 WriteTrait(trait);
             }

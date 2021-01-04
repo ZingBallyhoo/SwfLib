@@ -1,4 +1,6 @@
-﻿namespace SwfLib.Avm2.Data {
+﻿using System.Collections.Generic;
+
+namespace SwfLib.Avm2.Data {
     /// <summary>
     /// Represents abc file relational database.
     /// </summary>
@@ -10,17 +12,17 @@
 
         public AsConstantPoolInfo ConstantPool;
 
-        public AsMethodInfo[] Methods;
+        public List<AsMethodInfo> Methods;
         
-        public AsMetadataInfo[] Metadata;
+        public List<AsMetadataInfo> Metadata;
         
-        public AsInstanceInfo[] Instances;
+        public List<AsInstanceInfo> Instances;
         
-        public AsClassInfo[] Classes;
+        public List<AsClassInfo> Classes;
         
-        public AsScriptInfo[] Scripts;
+        public List<AsScriptInfo> Scripts;
         
-        public AsMethodBodyInfo[] Bodies;
+        public List<AsMethodBodyInfo> Bodies;
 
     }
 }

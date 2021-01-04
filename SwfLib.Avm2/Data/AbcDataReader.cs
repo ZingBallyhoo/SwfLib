@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace SwfLib.Avm2.Data {
@@ -23,14 +24,14 @@ namespace SwfLib.Avm2.Data {
                     MinorVersion = ReadU16(),
                     MajorVersion = ReadU16(),
                     ConstantPool = ReadConstantPool(),
-                    Methods = ReadMultipleMethods(),
-                    Metadata = ReadMutipleMetadata(),
+                    Methods = ReadMultipleMethods().ToList(),
+                    Metadata = ReadMutipleMetadata().ToList(),
                 };
                 var classCount = ReadU30();
-                res.Instances = ReadMutipleInstances(classCount);
-                res.Classes = ReadMultipleClasses(classCount);
-                res.Scripts = ReadMultipleScripts();
-                res.Bodies = ReadMultipleBodies();
+                res.Instances = ReadMutipleInstances(classCount).ToList();
+                res.Classes = ReadMultipleClasses(classCount).ToList();
+                res.Scripts = ReadMultipleScripts().ToList();
+                res.Bodies = ReadMultipleBodies().ToList();
                 return res;
             } catch (Exception e) {
                 throw new Exception(string.Format("Error at {0} ({0:x}):", Position), e);
@@ -92,42 +93,50 @@ namespace SwfLib.Avm2.Data {
         public AsConstantPoolInfo ReadConstantPool() {
             var res = new AsConstantPoolInfo();
 
-            res.Integers = new int[Math.Max(ReadU30(), 1)];
-            for (var i = 1; i < res.Integers.Length; i++) {
-                res.Integers[i] = ReadS32();
+            var resIntegers = new int[Math.Max(ReadU30(), 1)];
+            for (var i = 1; i < resIntegers.Length; i++) {
+                resIntegers[i] = ReadS32();
             }
 
-            res.UnsignedIntegers = new uint[Math.Max(ReadU30(), 1)];
-            for (var i = 1; i < res.UnsignedIntegers.Length; i++) {
-                res.UnsignedIntegers[i] = ReadU32();
+            var resUnsignedIntegers = new uint[Math.Max(ReadU30(), 1)];
+            for (var i = 1; i < resUnsignedIntegers.Length; i++) {
+                resUnsignedIntegers[i] = ReadU32();
             }
 
-            res.Doubles = new double[Math.Max(ReadU30(), 1)];
-            res.Doubles[0] = double.NaN;
-            for (var i = 1; i < res.Doubles.Length; i++) {
-                res.Doubles[i] = ReadD64();
+            var resDoubles = new double[Math.Max(ReadU30(), 1)];
+            resDoubles[0] = double.NaN;
+            for (var i = 1; i < resDoubles.Length; i++) {
+                resDoubles[i] = ReadD64();
             }
 
-            res.Strings = new string[Math.Max(ReadU30(), 1)];
-            res.Strings[0] = string.Empty;
-            for (var i = 1; i < res.Strings.Length; i++) {
-                res.Strings[i] = ReadString();
+            var resStrings = new string[Math.Max(ReadU30(), 1)];
+            resStrings[0] = string.Empty;
+            for (var i = 1; i < resStrings.Length; i++) {
+                resStrings[i] = ReadString();
             }
 
-            res.Namespaces = new AsNamespaceInfo[Math.Max(ReadU30(), 1)];
-            for (var i = 1; i < res.Namespaces.Length; i++) {
-                res.Namespaces[i] = ReadNamespace();
+            var resNamespaces = new AsNamespaceInfo[Math.Max(ReadU30(), 1)];
+            for (var i = 1; i < resNamespaces.Length; i++) {
+                resNamespaces[i] = ReadNamespace();
             }
 
-            res.NamespaceSets = new AsNamespaceSetInfo[Math.Max(ReadU30(), 1)];
-            for (var i = 1; i < res.NamespaceSets.Length; i++) {
-                res.NamespaceSets[i] = ReadNamespaceSet();
+            var resNamespaceSets = new AsNamespaceSetInfo[Math.Max(ReadU30(), 1)];
+            for (var i = 1; i < resNamespaceSets.Length; i++) {
+                resNamespaceSets[i] = ReadNamespaceSet();
             }
 
-            res.Multinames = new AsMultinameInfo[Math.Max(ReadU30(), 1)];
-            for (var i = 1; i < res.Multinames.Length; i++) {
-                res.Multinames[i] = ReadMultiname();
+            var resMultinames = new AsMultinameInfo[Math.Max(ReadU30(), 1)];
+            for (var i = 1; i < resMultinames.Length; i++) {
+                resMultinames[i] = ReadMultiname();
             }
+
+            res.Integers = resIntegers.ToList();
+            res.UnsignedIntegers = resUnsignedIntegers.ToList();
+            res.Doubles = resDoubles.ToList();
+            res.Strings = resStrings.ToList();
+            res.Namespaces = resNamespaces.ToList();
+            res.NamespaceSets = resNamespaceSets.ToList();
+            res.Multinames = resMultinames.ToList();
 
             return res;
         }
@@ -256,7 +265,7 @@ namespace SwfLib.Avm2.Data {
                 r.ProtectedNs = ReadU30();
             r.Interfaces = ReadMultipleU30();
             r.InstanceInitializer = ReadU30();
-            r.Traits = ReadMutlipleTraits();
+            r.Traits = ReadMutlipleTraits().ToList();
 
             return r;
         }

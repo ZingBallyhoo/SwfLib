@@ -31,11 +31,11 @@ namespace SwfLib.Avm2 {
 
             ReadConstants();
 
-            for (var i = 0; i < fileInfo.Classes.Length; i++) {
+            for (var i = 0; i < fileInfo.Classes.Count; i++) {
                 Classes.Add(new AbcClass());
             }
 
-            for (var i = 0; i < fileInfo.Scripts.Length; i++) {
+            for (var i = 0; i < fileInfo.Scripts.Count; i++) {
                 Scripts.Add(new AbcScript());
             }
 
@@ -45,7 +45,7 @@ namespace SwfLib.Avm2 {
 
             foreach (var methodInfo in fileInfo.Methods) {
                 var method = new AbcMethod {
-                    Name = fileInfo.ConstantPool.Strings[methodInfo.Name],
+                    Name = fileInfo.ConstantPool.Strings[(int)methodInfo.Name],
                     ReturnType = GetMultiname(methodInfo.ReturnType, AbcMultiname.Void),
                     NeedArguments = methodInfo.NeedArguments,
                     NeedActivation = methodInfo.NeedActivation,
@@ -58,7 +58,7 @@ namespace SwfLib.Avm2 {
                     var paramInfo = methodInfo.ParamTypes[paramIndex];
                     method.Params.Add(new AbcMethodParam {
                         Type = GetMultiname(paramInfo, AbcMultiname.Any),
-                        Name = methodInfo.HasParamNames ? fileInfo.ConstantPool.Strings[methodInfo.ParamNames[paramIndex].ParamName] : null
+                        Name = methodInfo.HasParamNames ? fileInfo.ConstantPool.Strings[(int)methodInfo.ParamNames[paramIndex].ParamName] : null
                     });
                 }
                 if (methodInfo.HasOptional) {
@@ -82,7 +82,7 @@ namespace SwfLib.Avm2 {
         }
 
         private void LoadClassInstances() {
-            for (var i = 0; i < FileInfo.Instances.Length; i++) {
+            for (var i = 0; i < FileInfo.Instances.Count; i++) {
                 var instanceInfo = FileInfo.Instances[i];
                 var @class = Classes[i];
                 @class.Instance = new AbcInstance {
@@ -96,7 +96,7 @@ namespace SwfLib.Avm2 {
         }
 
         private void LoadScriptInitializers() {
-            for (var i = 0; i < FileInfo.Scripts.Length; i++) {
+            for (var i = 0; i < FileInfo.Scripts.Count; i++) {
                 var scriptInfo = FileInfo.Scripts[i];
                 var script = Scripts[i];
                 script.ScriptInitializer = GetMethod(scriptInfo.ScriptInitializer);
@@ -104,7 +104,7 @@ namespace SwfLib.Avm2 {
         }
 
         private void LoadTraits() {
-            for (var i = 0; i < FileInfo.Scripts.Length; i++) {
+            for (var i = 0; i < FileInfo.Scripts.Count; i++) {
                 var scriptInfo = FileInfo.Scripts[i];
                 var script = Scripts[i];
                 AddTraits(script.Traits, scriptInfo.Traits);
@@ -114,12 +114,12 @@ namespace SwfLib.Avm2 {
                 var methodBody = method.Body;
                 AddTraits(methodBody.Traits, bodyInfo.Traits);
             }
-            for (var i = 0; i < FileInfo.Instances.Length; i++) {
+            for (var i = 0; i < FileInfo.Instances.Count; i++) {
                 var instanceInfo = FileInfo.Instances[i];
                 var instance = Classes[i].Instance;
                 AddTraits(instance.Traits, instanceInfo.Traits);
             }
-            for (var i = 0; i < FileInfo.Classes.Length; i++) {
+            for (var i = 0; i < FileInfo.Classes.Count; i++) {
                 var classInfo = FileInfo.Classes[i];
                 var @class = Classes[i];
                 AddTraits(@class.Traits, classInfo.Traits);
@@ -128,12 +128,12 @@ namespace SwfLib.Avm2 {
 
         private AbcMetadata ReadMetadata(AsMetadataInfo metaInfo) {
             var res = new AbcMetadata {
-                Name = FileInfo.ConstantPool.Strings[metaInfo.Name]
+                Name = FileInfo.ConstantPool.Strings[(int)metaInfo.Name]
             };
             foreach (var item in metaInfo.Items) {
                 res.Items.Add(new AbcMetadataItem {
-                    Key = FileInfo.ConstantPool.Strings[item.Key],
-                    Value = FileInfo.ConstantPool.Strings[item.Value]
+                    Key = FileInfo.ConstantPool.Strings[(int)item.Key],
+                    Value = FileInfo.ConstantPool.Strings[(int)item.Value]
                 });
             }
             return res;
@@ -144,7 +144,7 @@ namespace SwfLib.Avm2 {
             foreach (var ns in FileInfo.ConstantPool.Namespaces) {
                 Namespaces.Add(new AbcNamespace {
                     Kind = ns.Kind,
-                    Name = FileInfo.ConstantPool.Strings[ns.Name]
+                    Name = FileInfo.ConstantPool.Strings[(int)ns.Name]
                 });
             }
 
@@ -162,13 +162,13 @@ namespace SwfLib.Avm2 {
                 switch (multiname.Kind) {
                     case AsMultinameKind.QName:
                         Multinames.Add(new AbcMultinameQName {
-                            Name = FileInfo.ConstantPool.Strings[multiname.QName.Name],
+                            Name = FileInfo.ConstantPool.Strings[(int)multiname.QName.Name],
                             Namespace = GetNamespace(multiname.QName.Namespace, AbcNamespace.Any)
                         });
                         break;
                     case AsMultinameKind.QNameA:
                         Multinames.Add(new AbcMultinameQNameA {
-                            Name = FileInfo.ConstantPool.Strings[multiname.QName.Name],
+                            Name = FileInfo.ConstantPool.Strings[(int)multiname.QName.Name],
                             Namespace = GetNamespace(multiname.QName.Namespace, AbcNamespace.Any)
                         });
                         break;
@@ -177,7 +177,7 @@ namespace SwfLib.Avm2 {
                         break;
                     case AsMultinameKind.Multiname:
                         Multinames.Add(new AbcMultinameMultiname {
-                            Name = FileInfo.ConstantPool.Strings[multiname.Multiname.Name],
+                            Name = FileInfo.ConstantPool.Strings[(int)multiname.Multiname.Name],
                             NamespaceSet = GetNamespaceSet(multiname.Multiname.NamespaceSet, null)
                         });
                         break;
@@ -194,7 +194,7 @@ namespace SwfLib.Avm2 {
                         throw new Exception("Unsupported multiname kind " + multiname.Kind);
                 }
             }
-            for (var i = 0; i < FileInfo.ConstantPool.Multinames.Length; i++) {
+            for (var i = 0; i < FileInfo.ConstantPool.Multinames.Count; i++) {
                 var multiname = FileInfo.ConstantPool.Multinames[i];
                 if (multiname.Kind == AsMultinameKind.Generic) {
                     var vector = (AbcMultinameGeneric)Multinames[i];
@@ -337,13 +337,13 @@ namespace SwfLib.Avm2 {
         private AbcConstant GetConstantValue(AsConstantKind kind, uint value) {
             switch (kind) {
                 case AsConstantKind.Integer:
-                    return FileInfo.ConstantPool.Integers[value];
+                    return FileInfo.ConstantPool.Integers[(int)value];
                 case AsConstantKind.UInteger:
-                    return FileInfo.ConstantPool.UnsignedIntegers[value];
+                    return FileInfo.ConstantPool.UnsignedIntegers[(int)value];
                 case AsConstantKind.Double:
-                    return FileInfo.ConstantPool.Doubles[value];
+                    return FileInfo.ConstantPool.Doubles[(int)value];
                 case AsConstantKind.String:
-                    return FileInfo.ConstantPool.Strings[value];
+                    return FileInfo.ConstantPool.Strings[(int)value];
                 case AsConstantKind.True:
                     return true;
                 case AsConstantKind.False:
@@ -403,19 +403,19 @@ namespace SwfLib.Avm2 {
         }
 
         public string GetString(uint index) {
-            return FileInfo.ConstantPool.Strings[index];
+            return FileInfo.ConstantPool.Strings[(int)index];
         }
 
         public double GetDouble(uint index) {
-            return FileInfo.ConstantPool.Doubles[index];
+            return FileInfo.ConstantPool.Doubles[(int)index];
         }
 
         public int GetInteger(uint index) {
-            return FileInfo.ConstantPool.Integers[index];
+            return FileInfo.ConstantPool.Integers[(int)index];
         }
 
         public uint GetUInteger(uint index) {
-            return FileInfo.ConstantPool.UnsignedIntegers[index];
+            return FileInfo.ConstantPool.UnsignedIntegers[(int)index];
         }
     }
 }

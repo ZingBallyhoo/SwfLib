@@ -1,4 +1,6 @@
-﻿namespace SwfLib.Avm2.Data {
+﻿using System.Collections.Generic;
+
+namespace SwfLib.Avm2.Data {
     public struct AsInstanceInfo {
 
         public uint Name;
@@ -13,7 +15,7 @@
 
         public uint InstanceInitializer;
 
-        public AsTraitsInfo[] Traits;
+        public List<AsTraitsInfo> Traits;
 
         public bool HasProtectedNs {
             get { return ((int)Flags & (int) AsInstanceFlags.ProtectedNs) != 0; }

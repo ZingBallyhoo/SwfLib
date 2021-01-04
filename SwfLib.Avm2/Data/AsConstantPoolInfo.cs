@@ -1,19 +1,21 @@
-﻿namespace SwfLib.Avm2.Data {
+﻿using System.Collections.Generic;
+
+namespace SwfLib.Avm2.Data {
     public class AsConstantPoolInfo {
 
-        public int[] Integers;
+        public List<int> Integers;
 
-        public uint[] UnsignedIntegers;
+        public List<uint> UnsignedIntegers;
 
-        public double[] Doubles;
+        public List<double> Doubles;
 
-        public string[] Strings;
+        public List<string> Strings;
 
-        public AsNamespaceInfo[] Namespaces;
+        public List<AsNamespaceInfo> Namespaces;
 
-        public AsNamespaceSetInfo[] NamespaceSets;
+        public List<AsNamespaceSetInfo> NamespaceSets;
 
-        public AsMultinameInfo[] Multinames;
+        public List<AsMultinameInfo> Multinames;
 
     }
 }
