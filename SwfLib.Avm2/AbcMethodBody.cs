@@ -32,6 +32,7 @@ namespace SwfLib.Avm2 {
     public struct AbcMethodBodyInstruction {
 
         public uint Offset { get; set; }
+        public uint EndOffset { get; set; }
 
         public BaseAvm2Opcode Opcode { get; set; }
 
