@@ -6,6 +6,8 @@ namespace SwfLib.Avm2 {
         private readonly IList<AbcMultiname> _interfaces = new List<AbcMultiname>();
         private readonly IList<AbcTrait> _traits = new List<AbcTrait>();
 
+        public int ID { get; set; }
+
         //todo: must be QName
         public AbcMultiname Name { get; set; }
 

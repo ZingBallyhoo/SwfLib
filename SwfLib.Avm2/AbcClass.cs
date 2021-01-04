@@ -4,6 +4,8 @@ namespace SwfLib.Avm2 {
     public class AbcClass {
 
         private readonly IList<AbcTrait> _traits = new List<AbcTrait>();
+        
+        public int ID { get; set; }
 
         public AbcInstance Instance { get; set; }
 

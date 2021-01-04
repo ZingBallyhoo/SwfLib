@@ -32,7 +32,10 @@ namespace SwfLib.Avm2 {
             ReadConstants();
 
             for (var i = 0; i < fileInfo.Classes.Count; i++) {
-                Classes.Add(new AbcClass());
+                Classes.Add(new AbcClass
+                {
+                    ID = i
+                });
             }
 
             for (var i = 0; i < fileInfo.Scripts.Count; i++) {
@@ -86,6 +89,7 @@ namespace SwfLib.Avm2 {
                 var instanceInfo = FileInfo.Instances[i];
                 var @class = Classes[i];
                 @class.Instance = new AbcInstance {
+                    ID = i,
                     Name = GetMultiname(instanceInfo.Name, null),
                     SuperName = GetMultiname(instanceInfo.SuperName, AbcMultiname.Void),
                 };
@@ -230,6 +234,7 @@ namespace SwfLib.Avm2 {
             var opcodeReader = new Avm2OpcodeReader(this);
 
             var res = new AbcMethodBody {
+                ID = info.Method,
                 MaxStack = info.MaxStack,
                 LocalCount = info.LocalCount,
                 InitScopeDepth = info.InitScopeDepth,

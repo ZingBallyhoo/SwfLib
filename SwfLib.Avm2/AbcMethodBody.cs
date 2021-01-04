@@ -8,6 +8,8 @@ namespace SwfLib.Avm2 {
         private readonly IList<AbcExceptionBlock> _exceptions = new List<AbcExceptionBlock>();
         private readonly IList<AbcMethodBodyInstruction> _code = new List<AbcMethodBodyInstruction>();
 
+        public uint ID { get; set; }
+        
         public uint MaxStack { get; set; }
 
         public uint LocalCount { get; set; }
