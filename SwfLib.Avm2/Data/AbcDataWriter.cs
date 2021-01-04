@@ -289,7 +289,7 @@ namespace SwfLib.Avm2.Data {
 
         #region Primitives
 
-        private void WriteMutipleU30(uint[] vals, bool skipLength = false) {
+        public void WriteMutipleU30(uint[] vals, bool skipLength = false) {
             if (!skipLength) {
                 WriteU30((uint)vals.Length);
             }
@@ -298,22 +298,22 @@ namespace SwfLib.Avm2.Data {
             }
         }
 
-        void WriteU8(byte v) {
+        public void WriteU8(byte v) {
             _writer.Write(v);
         }
 
-        void WriteU16(ushort v) {
+        public void WriteU16(ushort v) {
             _writer.Write(v);
         }
 
-        private void WriteU30(uint val) {
+        public void WriteU30(uint val) {
             if (val >= (1 << 30)) {
                 throw new ArgumentOutOfRangeException("val");
             }
             WriteU32(val);
         }
 
-        private void WriteU32(ulong val) {
+        public void WriteU32(ulong val) {
             if (val < 0x80) {
                 _writer.Write((byte)val);
             } else {
@@ -345,16 +345,16 @@ namespace SwfLib.Avm2.Data {
             }
         }
 
-        private void WriteS32(int val) {
+        public void WriteS32(int val) {
             WriteU32((uint)val);
         }
 
-        private void WriteD64(double val) {
+        public void WriteD64(double val) {
             var l = BitConverter.DoubleToInt64Bits(val);
             _writer.Write(l);
         }
 
-        private void WriteString(string val) {
+        public void WriteString(string val) {
             WriteU30((uint)val.Length);
             var bytes = Encoding.UTF8.GetBytes(val);
             _writer.Write(bytes);
