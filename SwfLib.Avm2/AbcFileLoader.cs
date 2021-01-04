@@ -246,6 +246,7 @@ namespace SwfLib.Avm2 {
                 var offset = reader.Position;
                 var code = (Avm2Opcode)reader.ReadU8();
                 var opcode = factory.CreateOpcode(code);
+                opcode.Code = code;
                 opcode.AcceptVisitor(opcodeReader, reader);
                 res.Code.Add(new AbcMethodBodyInstruction {
                     Offset = (uint)offset,
