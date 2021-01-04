@@ -144,8 +144,10 @@ namespace SwfLib.Avm2 {
             return opcode;
         }
 
-        public BaseAvm2Opcode Visit(ConstructPropOpcode opcode, AbcDataReader arg) {
-            opcode.Name = _context.GetMultiname(arg.ReadU30(), null);
+        public BaseAvm2Opcode Visit(ConstructPropOpcode opcode, AbcDataReader arg)
+        {
+            opcode.RawName = arg.ReadU30();
+            opcode.Name = _context.GetMultiname(opcode.RawName, null);
             opcode.ArgCount = arg.ReadU30();
             return opcode;
         }
@@ -250,13 +252,17 @@ namespace SwfLib.Avm2 {
             throw new System.NotImplementedException();
         }
 
-        public BaseAvm2Opcode Visit(FindPropertyOpcode opcode, AbcDataReader arg) {
-            opcode.Name = _context.GetMultiname(arg.ReadU30(), null);
+        public BaseAvm2Opcode Visit(FindPropertyOpcode opcode, AbcDataReader arg)
+        {
+            opcode.RawName = arg.ReadU30();
+            opcode.Name = _context.GetMultiname(opcode.RawName, null);
             return opcode;
         }
 
-        public BaseAvm2Opcode Visit(FindPropStrictOpcode opcode, AbcDataReader arg) {
-            opcode.Name = _context.GetMultiname(arg.ReadU30(), null);
+        public BaseAvm2Opcode Visit(FindPropStrictOpcode opcode, AbcDataReader arg)
+        {
+            opcode.RawName = arg.ReadU30();
+            opcode.Name = _context.GetMultiname(opcode.RawName, null);
             return opcode;
         }
 
