@@ -267,7 +267,8 @@ namespace SwfLib.Avm2.Data {
             WriteU30(methodBody.InitScopeDepth);
             WriteU30(methodBody.MaxScopeDepth);
 
-
+            WriteU30((uint)methodBody.Code.Length);
+            _writer.Write(methodBody.Code);
 
             WriteMultipleExceptions(methodBody.Exceptions);
             WriteMultipleTraits(methodBody.Traits);
