@@ -77,6 +77,43 @@ namespace SwfLib.Avm2 {
                 }
                 Methods.Add(method);
             }
+
+            foreach (var instance in fileInfo.Instances)
+            {
+                foreach (var trait in instance.Traits)
+                {
+                    if (trait.Kind != AsTraitKind.Method) continue;
+                    if (trait.Method.Method == 18038)
+                    {
+                        
+                    }
+                }
+            }
+            
+            foreach (var instance in fileInfo.Classes)
+            {
+                foreach (var trait in instance.Traits)
+                {
+                    if (trait.Kind != AsTraitKind.Method) continue;
+                    if (trait.Method.Method == 18038)
+                    {
+                        
+                    }
+                }
+            }
+            
+            foreach (var instance in fileInfo.Scripts)
+            {
+                foreach (var trait in instance.Traits)
+                {
+                    if (trait.Kind != AsTraitKind.Method) continue;
+                    if (trait.Method.Method == 18038)
+                    {
+                        
+                    }
+                }
+            }
+            
             LoadClassInstances();
             LoadMethodBodies();
             LoadClassInitializers();
@@ -116,6 +153,7 @@ namespace SwfLib.Avm2 {
             foreach (var bodyInfo in FileInfo.Bodies) {
                 var method = GetMethod(bodyInfo.Method);
                 var methodBody = method.Body;
+                if (methodBody == null) continue; // todo; unloadble bodies
                 AddTraits(methodBody.Traits, bodyInfo.Traits);
             }
             for (var i = 0; i < FileInfo.Instances.Count; i++) {
@@ -189,6 +227,13 @@ namespace SwfLib.Avm2 {
                     case AsMultinameKind.MultinameL:
                     case AsMultinameKind.MultinameLA:
                     case AsMultinameKind.RTQName:
+                    case AsMultinameKind.RTQNameA:
+                        //throw new NotImplementedException();
+                        Multinames.Add(AbcMultiname.Void); //todo:
+                        break;
+                    case AsMultinameKind.RTQNameL:
+                    case AsMultinameKind.RTQNameLA:
+                        //throw new NotImplementedException();
                         Multinames.Add(AbcMultiname.Void); //todo:
                         break;
                     case AsMultinameKind.Generic:
@@ -226,7 +271,13 @@ namespace SwfLib.Avm2 {
                 var method = Methods[i];
                 AsMethodBodyInfo body;
                 bodies.TryGetValue((uint)i, out body);
-                method.Body = body != null ? GetMethodBody(body) : null;
+                try
+                {
+                    method.Body = body != null ? GetMethodBody(body) : null;
+                } catch (Exception e)
+                {
+                    //Console.Out.WriteLine(e);
+                }
             }
         }
 
@@ -240,6 +291,9 @@ namespace SwfLib.Avm2 {
                 InitScopeDepth = info.InitScopeDepth,
                 MaxScopeDepth = info.MaxScopeDepth,
             };
+
+            object prevCode = null;
+            
             var reader = new AbcDataReader(new MemoryStream(info.Code));
             var factory = new Avm2OpcodeFactory();
             while (!reader.IsEOF) {
@@ -253,6 +307,7 @@ namespace SwfLib.Avm2 {
                     EndOffset = (uint)reader.Position,
                     Opcode = opcode
                 });
+                prevCode = opcode;
             }
             foreach (var exc in info.Exceptions) {
                 res.Exceptions.Add(GetExceptionBlock(exc));

@@ -372,6 +372,13 @@ namespace SwfLib.Avm2.Data {
         public byte ReadU8() {
             return _reader.ReadByte();
         }
+        
+        public byte PeekU8()
+        {
+            var u8 = _reader.ReadByte();
+            _reader.BaseStream.Position--;
+            return u8;
+        }
 
         private ushort ReadU16() {
             return _reader.ReadUInt16();

@@ -1,4 +1,5 @@
-﻿using SwfLib.Avm2.Data;
+﻿using System;
+using SwfLib.Avm2.Data;
 using SwfLib.Avm2.Opcodes;
 using SwfLib.Avm2.Opcodes.Arithmetics;
 using SwfLib.Avm2.Opcodes.Branching;
@@ -170,7 +171,7 @@ namespace SwfLib.Avm2 {
         }
 
         public BaseAvm2Opcode Visit(ConvertOOpcode opcode, AbcDataReader arg) {
-            throw new System.NotImplementedException();
+            return opcode;
         }
 
         public BaseAvm2Opcode Visit(ConvertSOpcode opcode, AbcDataReader arg) {
@@ -200,11 +201,13 @@ namespace SwfLib.Avm2 {
         }
 
         public BaseAvm2Opcode Visit(DecLocalOpcode opcode, AbcDataReader arg) {
-            throw new System.NotImplementedException();
+            opcode.Index = arg.ReadU30();
+            return opcode;
         }
 
         public BaseAvm2Opcode Visit(DecLocalIOpcode opcode, AbcDataReader arg) {
-            throw new System.NotImplementedException();
+            opcode.Index = arg.ReadU30();
+            return opcode;
         }
 
         public BaseAvm2Opcode Visit(DecrementOpcode opcode, AbcDataReader arg) {
@@ -248,8 +251,11 @@ namespace SwfLib.Avm2 {
             throw new System.NotImplementedException();
         }
 
-        public BaseAvm2Opcode Visit(FindDefinitionOpcode opcode, AbcDataReader arg) {
-            throw new System.NotImplementedException();
+        public BaseAvm2Opcode Visit(FindDefinitionOpcode opcode, AbcDataReader arg)
+        {
+            opcode.RawName = arg.ReadU30();
+            opcode.Name = _context.GetMultiname(opcode.RawName, null);
+            return opcode;
         }
 
         public BaseAvm2Opcode Visit(FindPropertyOpcode opcode, AbcDataReader arg)
@@ -528,14 +534,33 @@ namespace SwfLib.Avm2 {
             return opcode;
         }
 
-        public BaseAvm2Opcode Visit(NewClassOpcode opcode, AbcDataReader arg) {
-            opcode.BaseType = _context.GetClass(arg.ReadU30());
+        public BaseAvm2Opcode Visit(NewClassOpcode opcode, AbcDataReader arg)
+        {
+            var index = arg.ReadU30();
+            opcode.BaseTypeIndex = index;
+            if (!PeekNextIsPop(arg))
+            {
+                opcode.BaseType = _context.GetClass(index);
+            }
             return opcode;
         }
 
-        public BaseAvm2Opcode Visit(NewFunctionOpcode opcode, AbcDataReader arg) {
-            opcode.Method = _context.GetMethod(arg.ReadU30());
+        public BaseAvm2Opcode Visit(NewFunctionOpcode opcode, AbcDataReader arg)
+        {
+            var index = arg.ReadU30();
+            opcode.MethodIndex = index;
+            if (!PeekNextIsPop(arg))
+            {
+                opcode.Method = _context.GetMethod(index);
+            }
             return opcode;
+        }
+
+        private bool PeekNextIsPop(AbcDataReader arg)
+        {
+            if (arg.IsEOF) return false;
+            var next = (Avm2Opcode) arg.PeekU8();
+            return next == Avm2Opcode.Pop;
         }
 
         public BaseAvm2Opcode Visit(NewObjectOpcode opcode, AbcDataReader arg) {
@@ -587,7 +612,8 @@ namespace SwfLib.Avm2 {
         }
 
         public BaseAvm2Opcode Visit(PushNamespaceOpcode opcode, AbcDataReader arg) {
-            throw new System.NotImplementedException();
+            opcode.Index = arg.ReadU30();
+            return opcode;
         }
 
         public BaseAvm2Opcode Visit(PushNanOpcode opcode, AbcDataReader arg) {
