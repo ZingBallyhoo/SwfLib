@@ -356,8 +356,8 @@ namespace SwfLib.Avm2.Data {
         }
 
         public void WriteString(string val) {
-            WriteU30((uint)val.Length);
             var bytes = Encoding.UTF8.GetBytes(val);
+            WriteU30((uint)bytes.Length);
             _writer.Write(bytes);
         }
 
