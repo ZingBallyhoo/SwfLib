@@ -46,8 +46,10 @@ namespace SwfLib.Avm2 {
                 _metadata.Add(ReadMetadata(metaInfo));
             }
 
+            var j = 0u;
             foreach (var methodInfo in fileInfo.Methods) {
                 var method = new AbcMethod {
+                    ID = j++,
                     Name = fileInfo.ConstantPool.Strings[(int)methodInfo.Name],
                     ReturnType = GetMultiname(methodInfo.ReturnType, AbcMultiname.Void),
                     NeedArguments = methodInfo.NeedArguments,
@@ -292,9 +294,14 @@ namespace SwfLib.Avm2 {
                 MaxScopeDepth = info.MaxScopeDepth,
             };
 
+            if (res.ID == 2929)
+            {
+                
+            }
+
             object prevCode = null;
             
-            var reader = new AbcDataReader(new MemoryStream(info.Code));
+            var reader = new AbcDataReader(new MemoryStream(info.Code, false));
             var factory = new Avm2OpcodeFactory();
             while (!reader.IsEOF) {
                 var offset = reader.Position;

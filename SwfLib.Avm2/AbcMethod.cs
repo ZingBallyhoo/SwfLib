@@ -6,6 +6,8 @@ namespace SwfLib.Avm2 {
 
         private readonly IList<AbcMethodParam> _params = new List<AbcMethodParam>();
 
+        public uint ID { get; set; }
+
         public string Name { get; set; }
 
         public AbcMethodBody Body { get; set; }
