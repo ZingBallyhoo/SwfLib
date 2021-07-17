@@ -8,6 +8,7 @@ namespace SwfLib.Avm2 {
 
         public static readonly AbcMultinameVoid Void = new AbcMultinameVoid();
 
+        public uint Index;
     }
 
     public class AbcMultinameQName : AbcMultiname {

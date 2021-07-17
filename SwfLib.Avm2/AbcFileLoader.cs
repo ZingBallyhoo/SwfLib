@@ -247,6 +247,9 @@ namespace SwfLib.Avm2 {
             }
             for (var i = 0; i < FileInfo.ConstantPool.Multinames.Count; i++) {
                 var multiname = FileInfo.ConstantPool.Multinames[i];
+
+                Multinames[i].Index = (uint)i;
+                
                 if (multiname.Kind == AsMultinameKind.Generic) {
                     var vector = (AbcMultinameGeneric)Multinames[i];
                     vector.Name = GetMultiname(multiname.TypeName.Name, null);
