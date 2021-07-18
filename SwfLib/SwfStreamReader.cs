@@ -8,7 +8,7 @@ namespace SwfLib {
     public class SwfStreamReader : ISwfStreamReader {
 
         private readonly BinaryReader _reader;
-        private readonly Stream _baseStream;
+        public readonly Stream _baseStream;
         
 
         public bool IsEOF {

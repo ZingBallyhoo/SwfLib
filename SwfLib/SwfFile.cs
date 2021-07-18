@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using SwfLib.Data;
 using SwfLib.Tags;
+using SwfLib.Tags.ActionsTags;
 
 namespace SwfLib {
     public class SwfFile {
@@ -10,6 +11,8 @@ namespace SwfLib {
         public SwfFileInfo FileInfo;
 
         public SwfHeader Header;
+
+        public bool ReserializeAbcOnly;
 
         /// <summary>
         /// Gets list of tags.
@@ -40,13 +43,7 @@ namespace SwfLib {
                 Compress(res, stream, swfFormat);
             } else {
                 var mem = new MemoryStream();
-                var writer = new SwfStreamWriter(mem);
-                writer.WriteSwfHeader(Header);
-                var bin = new SwfTagSerializer(this);
-                foreach (var tag in Tags) {
-                    var tagData = bin.GetTagData(tag);
-                    writer.WriteTagData(tagData);
-                }
+                WriteBodyTo(mem);
                 mem.Seek(0, SeekOrigin.Begin);
 
                 outputWriter.WriteSwfFileInfo(new SwfFileInfo {
@@ -58,6 +55,23 @@ namespace SwfLib {
             }
             outputWriter.Flush();
             stream.Flush();
+        }
+
+        public void WriteBodyTo(Stream mem)
+        {
+            var writer = new SwfStreamWriter(mem);
+            writer.WriteSwfHeader(Header);
+            var bin = new SwfTagSerializer(this);
+            foreach (var tag in Tags) {
+                var tagData = bin.GetTagData(tag);
+
+                if (ReserializeAbcOnly && tag is not DoABCTag)
+                {
+                    tagData.Data = tag.OriginalData;
+                }
+                
+                writer.WriteTagData(tagData);
+            }
         }
 
         public static void Compress(Stream source, Stream target, SwfFormat compressionFormat) {
@@ -130,7 +144,7 @@ namespace SwfLib {
             }
         }
 
-        protected static ISwfStreamReader GetSwfStreamReader(SwfFileInfo info, Stream stream) {
+        public static ISwfStreamReader GetSwfStreamReader(SwfFileInfo info, Stream stream) {
             if (info.Format == SwfFormat.FWS) {
                 return new SwfStreamReader(stream);
             }

@@ -13,6 +13,8 @@
         /// Gets or sets rest data that is not parsed into properties.
         /// </summary>
         public byte[] RestData;
+        
+        public byte[] OriginalData;
 
         /// <summary>
         /// Accept visitor.
@@ -23,6 +25,5 @@
         /// <param name="arg">Argument to be passed to visitor.</param>
         /// <returns></returns>
         public abstract TResult AcceptVistor<TArg, TResult>(ISwfTagVisitor<TArg, TResult> visitor, TArg arg);
-
     }
 }
