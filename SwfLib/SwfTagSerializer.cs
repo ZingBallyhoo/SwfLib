@@ -96,7 +96,7 @@ namespace SwfLib {
             writer.WriteBit(tag.ClassName != null);
             writer.WriteBit(tag.BitmapCache.HasValue);
             writer.WriteBit(tag.BlendMode.HasValue);
-            writer.WriteBit(tag.Filters.Count > 0);
+            writer.WriteBit(tag.HasFilterList);
 
             writer.WriteUInt16(tag.Depth);
 
@@ -126,7 +126,7 @@ namespace SwfLib {
                 writer.WriteUInt16(tag.ClipDepth.Value);
             }
 
-            if (tag.Filters.Count > 0) {
+            if (tag.HasFilterList) {
                 writer.WriteFilterList(tag.Filters);
             }
 
